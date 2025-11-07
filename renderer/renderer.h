@@ -1,0 +1,14 @@
+//
+// Created by user on 05.11.2025.
+//
+
+#ifndef TERMINAL_3D_GRAPHICS_ENGINE_RENDERER_H
+#define TERMINAL_3D_GRAPHICS_ENGINE_RENDERER_H
+
+
+class renderer
+{
+};
+
+
+#endif //TERMINAL_3D_GRAPHICS_ENGINE_RENDERER_H

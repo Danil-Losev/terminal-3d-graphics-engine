@@ -8,7 +8,6 @@
 
 #include "Vec3.h"
 #include "Vec4.h"
-#include "../scene/scene.h"
 
 class Mat4
 {
@@ -29,10 +28,7 @@ public:
 
     float* operator[](size_t index);
 
-    static Mat4 makePerspective(float fov, int screenHeight = scene::getMainScene()->getHeight(),
-                                int screenWidth = scene::getMainScene()->getWidth(),
-                                float near = scene::getMainScene()->getNearPlane(),
-                                float far = scene::getMainScene()->getFarPlane());
+    static Mat4 makePerspective(float fov, int screenHeight, int screenWidth, float near, float far);
     static Mat4 makeEye();
     static Mat4 scale(float x, float y, float z);
     static Mat4 rotationX(float angle);

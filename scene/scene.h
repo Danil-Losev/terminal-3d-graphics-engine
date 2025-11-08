@@ -5,6 +5,8 @@
 #ifndef TERMINAL_3D_GRAPHICS_ENGINE_SCENE_H
 #define TERMINAL_3D_GRAPHICS_ENGINE_SCENE_H
 
+#include "../shapes/shape.h"
+#include "camera.h"
 
 class scene
 {
@@ -18,6 +20,9 @@ private:
 
     static scene* mainScene;
 
+    std::vector<shape*> shapes;
+    camera* cam;
+
 public:
     scene();
     scene(int width, int height);
@@ -26,6 +31,12 @@ public:
     static scene* getMainScene();
     static void createMainScene(int width, int height);
     static void destroyMainScene();
+
+    void addShape(shape* shp);
+    void removeShape(shape* shp);
+
+    void setCamera(camera* cam);
+    camera* getCamera() const;
 
     [[nodiscard]] int getWidth() const;
     [[nodiscard]] int getHeight() const;
@@ -37,6 +48,7 @@ public:
     void setFarPlane(float farPlane);
 
     char** getBuffer() const;
+    void redrawBuffer() const;
     void render() const;
     void clear() const;
     void setPixel(int x, int y, float depth, char pixel) const;

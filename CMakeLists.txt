@@ -17,4 +17,10 @@ add_executable(terminal_3d_graphics_engine main.cpp
         math/Mat4.cpp
         math/Mat4.h
         math/Vec4.cpp
-        math/Vec4.h)
+        math/Vec4.h
+        shapes/shape.cpp
+        shapes/shape.h
+        shapes/parallelepiped.cpp
+        shapes/parallelepiped.h
+        scene/camera.cpp
+        scene/camera.h)

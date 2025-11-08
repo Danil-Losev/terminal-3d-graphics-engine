@@ -23,4 +23,10 @@ add_executable(terminal_3d_graphics_engine main.cpp
         shapes/parallelepiped.cpp
         shapes/parallelepiped.h
         scene/camera.cpp
-        scene/camera.h)
+        scene/camera.h
+        control/control.cpp
+        control/control.h
+        shapes/sphere.cpp
+        shapes/sphere.h
+        shapes/ellipsoid.cpp
+        shapes/ellipsoid.h)

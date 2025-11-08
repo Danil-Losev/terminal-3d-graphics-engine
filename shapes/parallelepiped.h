@@ -15,13 +15,9 @@ public:
     parallelepiped(const parallelepiped& other);
     parallelepiped(const std::vector<Vec3>& vertices, const std::vector<edge>& edges);
 
-    void setModel(const Mat4& newModel);
 
     float getPerimeter() const override;
     float getSquare() const override;
-    const std::vector<Vec3>& getVertices() const override;
-    const std::vector<edge>& getEdges() const override;
-    const Mat4& getModel() const override;
 
     ~parallelepiped() override = default;
 };

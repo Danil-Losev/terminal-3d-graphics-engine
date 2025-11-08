@@ -66,7 +66,7 @@ void drawLine(int x1, int y1, const float z1,
 }
 
 
-scene::scene() : width(300), height(300)
+scene::scene() : currentCameraIndex(-1), currentCamera(nullptr), width(300), height(300)
 {
     this->buffer = new char*[this->height];
     this->zBuffer = new float*[this->height];
@@ -84,7 +84,7 @@ scene::scene() : width(300), height(300)
     }
 }
 
-scene::scene(const int width, const int height)
+scene::scene(const int width, const int height) : currentCameraIndex(-1), currentCamera(nullptr)
 {
     this->width = width;
     this->height = height;
@@ -145,14 +145,31 @@ void scene::removeShape(shape* shp)
     std::erase(this->shapes, shp);
 }
 
-void scene::setCamera(camera* cam)
+void scene::addCamera(camera* cam)
 {
-    this->cam = cam;
+    this->cameras.push_back(cam);
+    this->changeCamera();
 }
 
-camera* scene::getCamera() const
+void scene::removeCamera(camera* cam)
 {
-    return this->cam;
+    std::erase(this->cameras, cam);
+}
+
+void scene::changeCamera()
+{
+    if (this->cameras.empty()) { return; }
+    this->currentCameraIndex = (this->currentCameraIndex + 1) % static_cast<int>(this->cameras.size());
+    this->currentCamera = this->cameras[this->currentCameraIndex];
+    if (this->currentCamera == nullptr && !this->cameras.empty())
+    {
+        this->currentCamera = this->cameras[0];
+    }
+}
+
+camera* scene::getCurrentCamera() const
+{
+    return this->currentCamera;
 }
 
 int scene::getWidth() const
@@ -192,13 +209,14 @@ char** scene::getBuffer() const
 
 void scene::redrawBuffer() const
 {
-    Mat4 perspectiveProjection = this->cam->getPerspectiveProjectionMatrix();
+    const Mat4 perspectiveProjection = this->currentCamera->getPerspectiveProjectionMatrix();
     for (const shape* shp : this->shapes)
     {
         if (shp == nullptr) { continue; }
 
         Mat4 model = shp->getModel();
-        Mat4 view = Mat4::lookAtMoveable(this->cam->camPos, this->cam->camTarget, this->cam->camUp);
+        Mat4 view = Mat4::lookAtMoveable(this->currentCamera->camPos, this->currentCamera->camTarget,
+                                         this->currentCamera->camUp);
 
 
         for (const auto& [v1, v2] : shp->getEdges())

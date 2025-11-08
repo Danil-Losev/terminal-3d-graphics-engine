@@ -23,11 +23,13 @@ protected:
     Mat4 model;
 
 public:
-    virtual const std::vector<Vec3>& getVertices() const =0;
-    virtual const std::vector<edge>& getEdges() const = 0;
-    virtual const Mat4& getModel() const = 0;
+    virtual const std::vector<Vec3>& getVertices() const;
+    virtual const std::vector<edge>& getEdges() const;
+    virtual const Mat4& getModel() const;
+    virtual const void setModel(const Mat4& model);
     virtual float getPerimeter() const = 0;
     virtual float getSquare() const = 0;
+
 
     virtual ~shape() = default;
 };

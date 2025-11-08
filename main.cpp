@@ -3,114 +3,77 @@
 #include <vector>
 #include <thread>
 #include <chrono>
-#include "math/Vec3.h"
-#include "math/Vec4.h"
-#include "math/Mat4.h"
-#include "math/Vec2.h"
-#include "scene/scene.h"
 #include <conio.h>
 
+#include "math/Vec3.h"
+#include "math/Mat4.h"
+
 #include "shapes/parallelepiped.h"
-
-bool input(camera* cam, bool& isMoving, bool& camChanged)
-{
-    isMoving = false;
-    if (_kbhit())
-    {
-        const char key = static_cast<char>(_getch());
-        isMoving = true;
-        constexpr float moveSpeed = 0.2f;
-        constexpr float rotSpeed = 0.05f;
-
-        // Вектор "вправо" через векторное произведение
-        Vec3 forward = (cam->camTarget - cam->camPos).normalize();
-        Vec3 right = forward.vectorMultiplication(cam->camUp).normalize();
-
-        // --- Движение камеры (WASD) ---
-        if (key == 'w') cam->camPos = cam->camPos + forward * moveSpeed;
-        if (key == 's') cam->camPos = cam->camPos - forward * moveSpeed;
-        if (key == 'a') cam->camPos = cam->camPos - right * moveSpeed;
-        if (key == 'd') cam->camPos = cam->camPos + right * moveSpeed;
-
-        // --- Вращение направления взгляда (IJKL) ---
-        if (key == 'i') forward = (forward - cam->camUp * rotSpeed).normalize(); // вверх
-        if (key == 'k') forward = (forward + cam->camUp * rotSpeed).normalize(); // вниз
-        if (key == 'j') forward = (forward - right * rotSpeed).normalize(); // влево
-        if (key == 'l') forward = (forward + right * rotSpeed).normalize(); // вправо
-
-        if (key == 'c')
-        {
-            camChanged = true;
-            return false; // смена камеры
-        }
-
-        // --- Обновление цели ---
-        cam->camTarget = cam->camPos + forward;
-
-        std::cout << "Position: (" << cam->camPos.X() << ", " << cam->camPos.Y() << ", " << cam->camPos.Z() << ")\n";
-        // --- Пример выхода ---
-        if (key == 27)
-        {
-            return true; // ESC
-        }
-    }
-    return false;
-}
-
+#include "control/control.h"
+#include "scene/scene.h"
+#include "shapes/sphere.h"
+#include "shapes/ellipsoid.h"
 
 int main()
 {
     scene::createMainScene(720, 200);
-    const auto cam1 = new camera(Vec3(5.0f, 5.0f, 5.0f), Vec3(1.0f, 1.0f, 1.0f), Vec3(0.0f, 1.0f, 0.0f));
+    const auto cam1 = new camera({5.0f, 5.0f, 5.0f}, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f, 0.0f});
     cam1->setPerspectiveProjectionMatrix(Mat4::makePerspective(50.0f,
                                                                scene::getMainScene()->getHeight(),
                                                                scene::getMainScene()->getWidth(),
                                                                scene::getMainScene()->getNearPlane(),
                                                                scene::getMainScene()->getFarPlane()));
-    const auto cam2 = new camera(Vec3(0.0f, 0.0f, 10.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(0.0f, 1.0f, 0.0f));
+    const auto cam2 = new camera({0.0f, 0.0f, 10.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 1.0f, 0.0f});
     cam2->setPerspectiveProjectionMatrix(Mat4::makePerspective(50.0f,
                                                                scene::getMainScene()->getHeight(),
                                                                scene::getMainScene()->getWidth(),
                                                                scene::getMainScene()->getNearPlane(),
                                                                scene::getMainScene()->getFarPlane()));
-    scene::getMainScene()->setCamera(cam1);
+    scene::getMainScene()->addCamera(cam1);
+    scene::getMainScene()->addCamera(cam2);
     shape* box1 = new parallelepiped();
-    static_cast<parallelepiped*>(box1)->setModel(
+    box1->setModel(
         Mat4::scale(2.0f, 2.0f, 2.0f)
     );
     scene::getMainScene()->addShape(box1);
-    shape* box2 = new parallelepiped(Vec3(2.0f, 2.0f, 2.0f), 2.0f, 2.0f, 0.0f);
-    static_cast<parallelepiped*>(box2)->setModel(
+    shape* box2 = new parallelepiped({2.0f, 2.0f, 2.0f}, 0.3f, 2.0f, 0.2f);
+    box2->setModel(
         Mat4::rotationY(0.5f)
     );
     scene::getMainScene()->addShape(box2);
-    camera* curCam = cam1;
+
+    shape* sphere1 = new sphere({-2.0f, 0.0f, 0.0f}, 1.0f, 24, 1);
+    sphere1->setModel(
+        Mat4::translation(-2.0f, 0.0f, 0.0f)
+    );
+
+    shape* ellipsoid1 = new ellipsoid({3.0f, 0.0f, 0.0f}, 1.0f, 1.0f, 0.0f, 24, 24);
+    ellipsoid1->setModel(
+        Mat4::translation(3.0f, 0.0f, 0.0f)
+    );
+    scene::getMainScene()->addShape(ellipsoid1);
+
+    scene::getMainScene()->addShape(sphere1);
+
+    control curControl(scene::getMainScene());
+
     while (true)
     {
-        bool isMoving = false;
-        bool camChanged = false;
+        curControl.processInput();
 
-        if (input(curCam, isMoving, camChanged))
+        if (curControl.getExitFlag())
         {
             break; // Выход из программы
         }
-        if (!isMoving)
+        if (!curControl.getMoveFlag())
         {
             std::this_thread::sleep_for(std::chrono::milliseconds(10));
             continue;
         }
 
-        if (camChanged)
+        if (curControl.getCamChangedFlag())
         {
-            if (curCam == cam1)
-            {
-                curCam = cam2;
-            }
-            else
-            {
-                curCam = cam1;
-            }
-            scene::getMainScene()->setCamera(curCam);
+            scene::getMainScene()->changeCamera();
         }
 
         scene::getMainScene()->clear();

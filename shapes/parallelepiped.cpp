@@ -55,11 +55,6 @@ parallelepiped::parallelepiped(const std::vector<Vec3>& vertices, const std::vec
     this->model = Mat4::makeEye();
 }
 
-void parallelepiped::setModel(const Mat4& newModel)
-{
-    this->model = newModel;
-}
-
 float parallelepiped::getPerimeter() const
 {
     float perimeter = 0.0f;
@@ -75,19 +70,4 @@ float parallelepiped::getPerimeter() const
 float parallelepiped::getSquare() const
 {
     return 0.0f; // Площадь поверхности параллелепипеда можно реализовать при необходимости
-}
-
-const std::vector<Vec3>& parallelepiped::getVertices() const
-{
-    return this->vertices;
-}
-
-const std::vector<edge>& parallelepiped::getEdges() const
-{
-    return this->edges;
-}
-
-const Mat4& parallelepiped::getModel() const
-{
-    return this->model;
 }

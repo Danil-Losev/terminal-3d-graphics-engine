@@ -11,6 +11,8 @@
 class scene
 {
 private:
+    int currentCameraIndex;
+    camera* currentCamera;
     int width, height;
     char** buffer;
     float** zBuffer;
@@ -21,7 +23,7 @@ private:
     static scene* mainScene;
 
     std::vector<shape*> shapes;
-    camera* cam;
+    std::vector<camera*> cameras;
 
 public:
     scene();
@@ -35,8 +37,10 @@ public:
     void addShape(shape* shp);
     void removeShape(shape* shp);
 
-    void setCamera(camera* cam);
-    camera* getCamera() const;
+    void addCamera(camera* cam);
+    void removeCamera(camera* cam);
+    void changeCamera();
+    camera* getCurrentCamera() const;
 
     [[nodiscard]] int getWidth() const;
     [[nodiscard]] int getHeight() const;

@@ -42,18 +42,11 @@ int main()
     );
     scene::getMainScene()->addShape(box2);
 
-    shape* sphere1 = new sphere({-2.0f, 0.0f, 0.0f}, 1.0f, 24, 1);
-    sphere1->setModel(
-        Mat4::translation(-2.0f, 0.0f, 0.0f)
-    );
-
     shape* ellipsoid1 = new ellipsoid({3.0f, 0.0f, 0.0f}, 1.0f, 1.0f, 0.0f, 24, 24);
     ellipsoid1->setModel(
         Mat4::translation(3.0f, 0.0f, 0.0f)
     );
     scene::getMainScene()->addShape(ellipsoid1);
-
-    scene::getMainScene()->addShape(sphere1);
 
     control curControl(scene::getMainScene());
 

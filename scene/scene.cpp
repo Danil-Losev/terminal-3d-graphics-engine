@@ -217,7 +217,7 @@ void scene::redrawBuffer() const
         Mat4 model = shp->getModel();
         Mat4 view = Mat4::lookAtMoveable(this->currentCamera->camPos, this->currentCamera->camTarget,
                                          this->currentCamera->camUp);
-
+        Mat4 viewModel = view * model;
 
         for (const auto& [v1, v2] : shp->getEdges())
         {
@@ -226,8 +226,8 @@ void scene::redrawBuffer() const
             const Vec3& vB = shp->getVertices()[v2];
 
             // переводим в пространство камеры (model -> view)
-            Vec4 camA = view * model * Vec4(vA.X(), vA.Y(), vA.Z(), 1.0f);
-            Vec4 camB = view * model * Vec4(vB.X(), vB.Y(), vB.Z(), 1.0f);
+            Vec4 camA = viewModel * Vec4(vA.X(), vA.Y(), vA.Z(), 1.0f);
+            Vec4 camB = viewModel * Vec4(vB.X(), vB.Y(), vB.Z(), 1.0f);
 
             float za = camA.Z();
             float zb = camB.Z();

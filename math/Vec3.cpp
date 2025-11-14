@@ -6,6 +6,7 @@
 
 #include <cmath>
 #include <fstream>
+#include "quickSQRT.h"
 
 Vec3::Vec3() : x(0), y(0), z(0)
 {
@@ -90,13 +91,12 @@ Vec3 Vec3::vectorMultiplication(const Vec3& vec) const
 
 float Vec3::length() const
 {
-    return std::sqrt(this->x * this->x + this->y * this->y + this->z * this->z);
+    return quickSQRT::Q_rsqrt(1.0f / (this->x * this->x + this->y * this->y + this->z * this->z));
 }
 
 Vec3 Vec3::normalize() const
 {
-    const float length = this->length();
-    return length > 0 ? *this / length : Vec3();
+    return (*this) * quickSQRT::Q_rsqrt(this->x * this->x + this->y * this->y + this->z * this->z);
 }
 
 float Vec3::getAngle(const Vec3& vec1, const Vec3& vec2)

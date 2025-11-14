@@ -29,4 +29,6 @@ add_executable(terminal_3d_graphics_engine main.cpp
         shapes/sphere.cpp
         shapes/sphere.h
         shapes/ellipsoid.cpp
-        shapes/ellipsoid.h)
+        shapes/ellipsoid.h
+        math/quickSQRT.cpp
+        math/quickSQRT.h)
